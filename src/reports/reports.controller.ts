@@ -20,22 +20,25 @@ import { AdminGuard } from '../guards/admin.guard';
 import { GetEstimateDto } from './dtos/get-estimate.dto';
 
 @Controller('reports')
-@Serialize(ReportDto)
 export class ReportsController {
   constructor(private reportsSvc: ReportsService) {}
 
   @Post()
   @UseGuards(AuthGuard)
+  @Serialize(ReportDto)
   createReport(@Body() body: CreateReportDto, @CurrentUser() user: User) {
     return this.reportsSvc.create(body, user);
   }
 
   @Patch('/:id')
   @UseGuards(AdminGuard)
+  @Serialize(ReportDto)
   approveReport(@Param('id') id: string, @Body() body: ApproveReportDto) {
     return this.reportsSvc.changeApproval(id, body.approved);
   }
 
   @Get()
-  getEstimate(@Query() query: GetEstimateDto) {}
+  getEstimate(@Query() query: GetEstimateDto) {
+    return this.reportsSvc.createEstimate(query);
+  }
 }
